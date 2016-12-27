@@ -72,7 +72,7 @@ class Sentinel
             $this->_close();
             return $data;
         } else {
-            throw new RedisSentinelClientNoConnectionExecption;
+            throw new RedisSentinelClientNoConnectionException();
         }
     }
 
@@ -103,7 +103,7 @@ class Sentinel
             $this->_close();
             return $data;
         } else {
-            throw new RedisSentinelClientNoConnectionExecption;
+            throw new RedisSentinelClientNoConnectionException();
         }
     }
 
@@ -131,7 +131,7 @@ class Sentinel
             $this->_close();
             return array(ltrim($state, ':'), $leader);
         } else {
-            throw new RedisSentinelClientNoConnectionExecption;
+            throw new RedisSentinelClientNoConnectionException();
         }
     }
 
@@ -155,7 +155,7 @@ class Sentinel
             $this->_close();
             return $data[0];
         } else {
-            throw new RedisSentinelClientNoConnectionExecption;
+            throw new RedisSentinelClientNoConnectionException();
         }
     }
 
@@ -174,7 +174,7 @@ class Sentinel
             $this->_close();
             return ltrim($data, ':');
         } else {
-            throw new RedisSentinelClientNoConnectionExecption;
+            throw new RedisSentinelClientNoConnectionException;
         }
     }
 

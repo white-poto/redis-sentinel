@@ -9,7 +9,7 @@
 namespace Jenner\Redis;
 
 
-class RedisSentinelClientNoConnectionExecption extends \RedisException
+class RedisSentinelClientNoConnectionException extends \RedisException
 {
 
 }
