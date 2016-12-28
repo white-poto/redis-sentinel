@@ -28,27 +28,5 @@ class MasterDiscover
         $this->sentinels[] = new Sentinel($host, $port);
     }
 
-    /**
-     * @param $name
-     * @return array ["host"=>$host, "port"=>$port]
-     * @throws RedisSentinelClientNoConnectionException
-     */
-    public function getMasterByName($name)
-    {
-        foreach ($this->sentinels as $sentinel) {
-            try {
-                $data = $sentinel->get_master_addr_by_name($name);
-                $keys = array_keys($data);
-                $values = array_values($data);
-                return array(
-                    'host' => $keys[0],
-                    'port' => $values[0],
-                );
-            } catch (\Exception $e) {
-                continue;
-            }
-        }
 
-        throw new RedisSentinelClientNoConnectionException("all sentinel connect failed");
-    }
 }

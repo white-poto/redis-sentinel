@@ -120,7 +120,7 @@ class Sentinel
      * )
      * @endcode
      */
-    public function is_master_down_by_addr($ip, $port)
+    public function isMasterDownByAddress($ip, $port)
     {
         if ($this->_connect()) {
             $this->_write('SENTINEL is-master-down-by-addr ' . $ip . ' ' . $port);
@@ -146,7 +146,7 @@ class Sentinel
      * )
      * @endcode
      */
-    public function get_master_addr_by_name($master)
+    public function getMasterAddressByName($master)
     {
         if ($this->_connect()) {
             $this->_write('SENTINEL get-master-addr-by-name ' . $master);
@@ -227,9 +227,9 @@ class Sentinel
     }
 
     /*!
-     * Sentinel サーバからの返却値を取得
+     * Sentinel read all data the sentinel server package
      *
-     * @retval string 返却値
+     * @return string completely redis protocol package string
      */
     protected function _get()
     {
@@ -241,10 +241,10 @@ class Sentinel
     }
 
     /*!
-     * 多次元階層を表す Redis レスポンス文字列を配列へ変換
+     * redis protocol parser
      *
-     * @param [in] $data string サーバからの返却値文字列
-     * @retval array 配列1
+     * @param [in] $data string redis protocol frame
+     * @return array
      */
     protected function _extract($data)
     {
