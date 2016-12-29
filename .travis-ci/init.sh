@@ -11,6 +11,7 @@ mkdir -p ./data/sentinel/26380
 
 ./redis/bin/redis-sentinel .travis-ci/etc/sentinel.26379.conf
 ./redis/bin/redis-sentinel .travis-ci/etc/sentinel.26380.conf
+./redis/bin/redis-sentinel .travis-ci/etc/sentinel.26381.conf
 
 
 ss -l
