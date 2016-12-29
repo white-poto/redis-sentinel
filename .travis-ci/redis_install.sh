@@ -1,6 +1,6 @@
 #!/bin/sh
 SOURCE=https://github.com/antirez/redis/archive/3.2.6.tar.gz
-PREFIX=/usr/local/redis
+PREFIX=./redis
 
 if [ ! -f redis-server.tar.gz ]; then
      wget $SOURCE -O redis-server.tar.gz
@@ -18,9 +18,6 @@ mkdir $PREFIX/var/data
 cp redis.conf $PREFIX/etc/
 cp sentinel.conf $PREFIX/etc/
 find src/ -type f -executable -exec cp {} $PREFIX/bin \;
-
-echo "export PATH=\${PATH}:${PREFIX}/bin" >> /etc/profile
-source /etc/profile
 
 echo "install redis success"
 rm redis-server.tar.gz -rf
