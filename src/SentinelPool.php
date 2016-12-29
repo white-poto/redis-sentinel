@@ -20,9 +20,9 @@ namespace Jenner\RedisSentinel;
  * @method array getMasterAddrByName(string $master_name)
  * @method int reset(string $pattern)
  * @method boolean failOver(string $master_name)
- * @method mixed ckquorum(string $master_name)
- * @method mixed checkQuorum(string $master_name)
- * @method mixed flushConfig()
+ * @method boolean ckquorum(string $master_name)
+ * @method boolean checkQuorum(string $master_name)
+ * @method boolean flushConfig()
  */
 class SentinelPool
 {

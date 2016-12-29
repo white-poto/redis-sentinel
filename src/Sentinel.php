@@ -61,6 +61,12 @@ class Sentinel
         return $this->parseArrayResult($this->redis->rawCommand('SENTINEL', 'masters'));
     }
 
+    /**
+     * parse redis response data
+     *
+     * @param array $data
+     * @return array
+     */
     private function parseArrayResult(array $data)
     {
         $result = array();
@@ -189,7 +195,7 @@ class Sentinel
      * In those cases a way to to force Sentinel to rewrite the configuration file is handy.
      * This command works even if the previous configuration file is completely missing.
      *
-     * @return mixed
+     * @return boolean
      */
     public function flushConfig()
     {

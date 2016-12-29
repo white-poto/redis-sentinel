@@ -55,18 +55,18 @@ class SentinelTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('6380', $slaves[0]['port']);
     }
 
-    public function testReset()
-    {
-        $this->assertEquals(1, $this->sentinel->reset($this->master_name));
-    }
-
-//    public function testSentinels()
+//    public function testReset()
 //    {
-//        $sentinels = $this->sentinel->sentinels($this->master_name);
-//        $this->assertEquals(2, count($sentinels));
-//        $this->assertEquals('127.0.0.1', $sentinels[0]['ip']);
-//        $this->assertEquals(26380, $sentinels[0]['port']);
+//        $this->assertEquals(1, $this->sentinel->reset($this->master_name));
 //    }
+
+    public function testSentinels()
+    {
+        $sentinels = $this->sentinel->sentinels($this->master_name);
+        $this->assertEquals(2, count($sentinels));
+        $this->assertEquals('127.0.0.1', $sentinels[0]['ip']);
+        $this->assertEquals(26380, $sentinels[0]['port']);
+    }
 
     public function testGetMasterAddrByName()
     {
