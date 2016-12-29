@@ -34,22 +34,6 @@ class SentinelTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($this->sentinel->ping());
     }
 
-    public function testFlushConfig()
-    {
-        $this->assertTrue($this->sentinel->flushConfig());
-    }
-
-    public function testCheckQuorum()
-    {
-        $this->assertTrue($this->sentinel->checkQuorum($this->master_name));
-        $this->assertTrue($this->sentinel->ckquorum($this->master_name));
-    }
-
-    public function testFailover()
-    {
-        $this->assertFalse($this->sentinel->failOver($this->master_name));
-    }
-
     public function testMasters()
     {
         $masters = $this->sentinel->masters();
@@ -90,5 +74,22 @@ class SentinelTest extends \PHPUnit_Framework_TestCase
         $address = $this->sentinel->getMasterAddrByName($this->master_name);
         $this->assertEquals('127.0.0.1', $address['ip']);
         $this->assertEquals(6379, $address['port']);
+    }
+
+
+    public function testFlushConfig()
+    {
+        $this->assertTrue($this->sentinel->flushConfig());
+    }
+
+    public function testCheckQuorum()
+    {
+        $this->assertTrue($this->sentinel->checkQuorum($this->master_name));
+        $this->assertTrue($this->sentinel->ckquorum($this->master_name));
+    }
+
+    public function testFailover()
+    {
+        $this->assertFalse($this->sentinel->failOver($this->master_name));
     }
 }
