@@ -32,6 +32,12 @@ class SentinelTest extends \PHPUnit_Framework_TestCase
     public function testPing()
     {
         $this->assertEquals("+PONG", $this->sentinel->ping());
+        echo 'flushconfig:';
+        var_dump($this->sentinel->flushConfig());
+        echo 'ck:', PHP_EOL;
+        var_dump($this->sentinel->checkQuorum($this->master_name));
+        echo 'failOver:', PHP_EOL;
+        var_dump($this->sentinel->failOver($this->master_name));
     }
 
     public function testMasters()
