@@ -5,7 +5,6 @@ mkdir -p ./data/redis/6380
 mkdir -p ./data/sentinel/26379
 mkdir -p ./data/sentinel/26380
 
-find .
 
 ./redis/bin/redis-server .travis-ci/etc/redis.6379.conf
 ./redis/bin/redis-server .travis-ci/etc/redis.6380.conf
