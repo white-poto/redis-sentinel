@@ -22,5 +22,6 @@ find src/ -type f -executable -exec cp {} $PREFIX/bin \;
 echo "install redis success"
 rm redis-server.tar.gz -rf
 
+cd ..
 
 
