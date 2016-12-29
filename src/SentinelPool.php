@@ -31,6 +31,10 @@ class SentinelPool
      */
     protected $sentinels = array();
 
+    /**
+     * SentinelPool constructor.
+     * @param array $sentinels [['host'=>'host', 'port'=>'port']]
+     */
     public function __construct(array $sentinels = array())
     {
         foreach ($sentinels as $sentinel) {
@@ -38,6 +42,13 @@ class SentinelPool
         }
     }
 
+    /**
+     * add sentinel to sentinel pool
+     *
+     * @param string $host sentinel server host
+     * @param int $port sentinel server port
+     * @return bool
+     */
     public function addSentinel($host, $port)
     {
         $sentinel = new Sentinel();
@@ -48,6 +59,24 @@ class SentinelPool
         }
 
         return false;
+    }
+
+    /**
+     * get Redis object by master name
+     *
+     * @param $master_name
+     * @return \Redis
+     * @throws \RedisException
+     */
+    public function getRedis($master_name)
+    {
+        $address = $this->getMasterAddrByName($master_name);
+        $redis = new \Redis();
+        if (!$redis->connect($address['ip'], $address['port'])) {
+            throw new \RedisException("connect to redis failed");
+        }
+
+        return $redis;
     }
 
     public function __call($name, $arguments)

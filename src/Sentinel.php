@@ -86,7 +86,7 @@ class Sentinel
     /**
      * Show the state and info of the specified master.
      *
-     * @param $master_name
+     * @param string $master_name
      * @return array
      */
     public function master($master_name)
@@ -121,7 +121,7 @@ class Sentinel
      * If a failover is in progress or terminated successfully
      * for this master it returns the address and port of the promoted slave.
      *
-     * @param $master_name
+     * @param string $master_name
      * @return array
      */
     public function getMasterAddrByName($master_name)
@@ -140,7 +140,7 @@ class Sentinel
      * (including a failover in progress), and removes every slave
      * and sentinel already discovered and associated with the master.
      *
-     * @param $pattern
+     * @param string $pattern
      * @return int
      */
     public function reset($pattern)
@@ -154,7 +154,7 @@ class Sentinel
      * (however a new version of the configuration will be published
      * so that the other Sentinels will update their configurations).
      *
-     * @param $master_name
+     * @param string $master_name
      * @return boolean
      */
     public function failOver($master_name)
@@ -163,7 +163,7 @@ class Sentinel
     }
 
     /**
-     * @param $master_name
+     * @param string $master_name
      * @return boolean
      */
     public function ckquorum($master_name)
@@ -177,7 +177,7 @@ class Sentinel
      * needed to authorize the failover. This command should be
      * used in monitoring systems to check if a Sentinel deployment is ok.
      *
-     * @param $master_name
+     * @param string $master_name
      * @return boolean
      */
     public function checkQuorum($master_name)
