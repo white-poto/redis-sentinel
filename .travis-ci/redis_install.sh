@@ -1,6 +1,5 @@
 #!/bin/sh
 SOURCE=https://github.com/antirez/redis/archive/3.2.6.tar.gz
-PREFIX=./redis
 
 if [ ! -f redis-server.tar.gz ]; then
      wget $SOURCE -O redis-server.tar.gz
@@ -8,6 +7,7 @@ fi
 
 tar zxvf redis-server.tar.gz
 cd redis-3.2.6
+PREFIX=../redis
 make && make install
 mkdir $PREFIX
 mkdir $PREFIX/bin
