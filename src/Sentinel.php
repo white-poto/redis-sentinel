@@ -58,7 +58,23 @@ class Sentinel
      */
     public function masters()
     {
-        return $this->redis->rawCommand('SENTINEL', 'masters');
+        return $this->parseArrayResult($this->redis->rawCommand('SENTINEL', 'masters'));
+    }
+
+    private function parseArrayResult(array $data)
+    {
+        $result = array();
+        $count = count($data);
+        for ($i = 0; $i < $count; $i += 2) {
+            $record = $data[$i];
+            if (is_array($record)) {
+                $result[] = $this->parseArrayResult($record);
+            } else {
+                $result[$record] = $data[$i + 1];
+            }
+        }
+
+        return $result;
     }
 
     /**
@@ -69,7 +85,7 @@ class Sentinel
      */
     public function master($master_name)
     {
-        return $this->redis->rawCommand('SENTINEL', 'master', $master_name);
+        return $this->parseArrayResult($this->redis->rawCommand('SENTINEL', 'master', $master_name));
     }
 
     /**
@@ -80,7 +96,7 @@ class Sentinel
      */
     public function slaves($master_name)
     {
-        return $this->redis->rawCommand('SENTINEL', 'slaves', $master_name);
+        return $this->parseArrayResult($this->redis->rawCommand('SENTINEL', 'slaves', $master_name));
     }
 
     /**
@@ -91,7 +107,7 @@ class Sentinel
      */
     public function sentinels($master_name)
     {
-        return $this->redis->rawCommand('SENTINEL', 'sentinels', $master_name);
+        return $this->parseArrayResult($this->redis->rawCommand('SENTINEL', 'sentinels', $master_name));
     }
 
     /**
@@ -104,7 +120,7 @@ class Sentinel
      */
     public function getMasterAddrByName($master_name)
     {
-        return $this->redis->rawCommand('SENTINEL', 'get-master-addr-by-name', $master_name);
+        return $this->parseArrayResult($this->redis->rawCommand('SENTINEL', 'get-master-addr-by-name', $master_name));
     }
 
     /**
@@ -115,7 +131,7 @@ class Sentinel
      * and sentinel already discovered and associated with the master.
      *
      * @param $pattern
-     * @return array
+     * @return int
      */
     public function reset($pattern)
     {
@@ -129,11 +145,11 @@ class Sentinel
      * so that the other Sentinels will update their configurations).
      *
      * @param $master_name
-     * @return mixed
+     * @return boolean
      */
     public function failOver($master_name)
     {
-        return $this->redis->rawCommand('SENTINEL', 'failover', $master_name);
+        return $this->redis->rawCommand('SENTINEL', 'failover', $master_name) === 'OK';
     }
 
     /**
