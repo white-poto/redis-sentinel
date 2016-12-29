@@ -8,7 +8,6 @@ php:
 
 before_script:
  - pecl install -f redis-2.2.8
- - echo "extension = redis.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
  - sh .travis-ci/init.sh
  - composer self-update
  - composer update

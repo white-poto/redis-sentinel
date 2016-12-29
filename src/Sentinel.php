@@ -30,13 +30,15 @@ class Sentinel
     /**
      * @param $host
      * @param int $port
-     * @throws SentinelClientNotConnectException
+     * @return boolean
      */
     public function connect($host, $port = 26379)
     {
         if (!$this->redis->connect($host, $port)) {
-            throw new SentinelClientNotConnectException("connect to sentinel failed");
+            return false;
         }
+
+        return true;
     }
 
     /**
@@ -73,21 +75,23 @@ class Sentinel
     /**
      * Show a list of slaves for this master, and their state.
      *
+     * @param string $master_name
      * @return array
      */
-    public function slaves()
+    public function slaves($master_name)
     {
-        return $this->redis->rawCommand('SENTINEL', 'slaves');
+        return $this->redis->rawCommand('SENTINEL', 'slaves', $master_name);
     }
 
     /**
      * Show a list of sentinel instances for this master, and their state.
      *
+     * @param string $master_name
      * @return array
      */
-    public function sentinels()
+    public function sentinels($master_name)
     {
-        return $this->redis->rawCommand('SENTINEL', 'sentinels');
+        return $this->redis->rawCommand('SENTINEL', 'sentinels', $master_name);
     }
 
     /**
@@ -133,6 +137,15 @@ class Sentinel
     }
 
     /**
+     * @param $master_name
+     * @return mixed
+     */
+    public function ckquorum($master_name)
+    {
+        return $this->checkQuorum($master_name);
+    }
+
+    /**
      * Check if the current Sentinel configuration is able to
      * reach the quorum needed to failover a master, and the majority
      * needed to authorize the failover. This command should be
@@ -144,15 +157,6 @@ class Sentinel
     public function checkQuorum($master_name)
     {
         return $this->redis->rawCommand('SENTINEL', 'ckquorum', $master_name);
-    }
-
-    /**
-     * @param $master_name
-     * @return mixed
-     */
-    public function ckquorum($master_name)
-    {
-        return $this->checkQuorum($master_name);
     }
 
     /**
