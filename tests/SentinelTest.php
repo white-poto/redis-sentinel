@@ -38,20 +38,19 @@ class SentinelTest extends \PHPUnit_Framework_TestCase
     {
         $masters = $this->sentinel->masters();
         $this->assertEquals(1, count($masters));
-        var_dump($masters);
         $this->assertEquals($this->master_name, $masters[0]['name']);
     }
 
     public function testMaster()
     {
         $master = $this->sentinel->master($this->master_name);
-        var_dump($master);
         $this->assertEquals($this->master_name, $master['name']);
     }
 
     public function testSlaves()
     {
         $slaves = $this->sentinel->slaves($this->master_name);
+        echo 'slaves:', PHP_EOL;
         var_dump($slaves);
         $this->assertEquals(1, count($slaves));
         $this->assertEquals('127.0.0.1', $slaves[0]['ip']);
@@ -61,6 +60,7 @@ class SentinelTest extends \PHPUnit_Framework_TestCase
     public function testSentinels()
     {
         $sentinels = $this->sentinel->sentinels($this->master_name);
+        echo 'sentinels:', PHP_EOL;
         var_dump($sentinels);
         $this->assertEquals(1, count($sentinels));
         $this->assertEquals('127.0.0.1', $sentinels[0]['ip']);
@@ -70,7 +70,6 @@ class SentinelTest extends \PHPUnit_Framework_TestCase
     public function testGetMasterAddrByName()
     {
         $address = $this->sentinel->getMasterAddrByName($this->master_name);
-        var_dump($address);
         $this->assertEquals('127.0.0.1', $address[0]);
         $this->assertEquals(6379, $address[1]);
     }
