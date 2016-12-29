@@ -8,7 +8,22 @@
 
 namespace Jenner\RedisSentinel;
 
-
+/**
+ * Class SentinelPool
+ * @package Jenner\RedisSentinel
+ *
+ * @method string ping()
+ * @method array masters()
+ * @method array master(string $master_name)
+ * @method array slaves(string $master_name)
+ * @method array sentinels(string $master_name)
+ * @method array getMasterAddrByName(string $master_name)
+ * @method int reset(string $pattern)
+ * @method boolean failOver(string $master_name)
+ * @method mixed ckquorum(string $master_name)
+ * @method mixed checkQuorum(string $master_name)
+ * @method mixed flushConfig()
+ */
 class SentinelPool
 {
     /**
@@ -19,86 +34,35 @@ class SentinelPool
     public function __construct(array $sentinels = array())
     {
         foreach ($sentinels as $sentinel) {
-            $this->sentinels[] = new Sentinel($sentinel['host'], $sentinel['port']);
+            $this->addSentinel($sentinel['host'], $sentinel['port']);
         }
     }
 
     public function addSentinel($host, $port)
     {
-        $this->sentinels[] = new Sentinel($host, $port);
-    }
-
-    public function masters() {
-        foreach ($this->sentinels as $sentinel) {
-            try {
-                return $sentinel->masters();
-            } catch (\Exception $e) {
-                continue;
-            }
+        $sentinel = new Sentinel();
+        // if connect to sentinel successfully, add it to sentinels array
+        if ($sentinel->connect($host, $port)) {
+            $this->sentinels[] = $sentinel;
+            return true;
         }
 
-        throw new SentinelClientNotConnectException("all sentinel connect failed");
+        return false;
     }
 
-    public function slaves($master_name) {
-        foreach ($this->sentinels as $sentinel) {
-            try {
-                return $sentinel->slaves($master_name);
-            } catch (\Exception $e) {
-                continue;
-            }
-        }
-
-        throw new SentinelClientNotConnectException("all sentinel connect failed");
-    }
-
-    public function isMasterDownByAddress($ip, $port) {
-        foreach ($this->sentinels as $sentinel) {
-            try {
-                return $sentinel->isMasterDownByAddress($ip, $port);
-            } catch (\Exception $e) {
-                continue;
-            }
-        }
-
-        throw new SentinelClientNotConnectException("all sentinel connect failed");
-    }
-
-    public function reset($pattern) {
-        foreach ($this->sentinels as $sentinel) {
-            try {
-                return $sentinel->reset($pattern);
-            } catch (\Exception $e) {
-                continue;
-            }
-        }
-
-        throw new SentinelClientNotConnectException("all sentinel connect failed");
-    }
-
-    /**
-     * @param string $master_name redis master name
-     * @return array ["host"=>$host, "port"=>$port]
-     * @throws SentinelClientNotConnectException
-     */
-    public function getMasterAddressByName($master_name)
+    public function __call($name, $arguments)
     {
         foreach ($this->sentinels as $sentinel) {
+            if (!method_exists($sentinel, $name)) {
+                throw new \BadMethodCallException("method not exists. method: {$name}");
+            }
             try {
-                $data = $sentinel->getMasterAddressByName($master_name);
-                $keys = array_keys($data);
-                $values = array_values($data);
-                return array(
-                    'host' => $keys[0],
-                    'port' => $values[0],
-                );
+                return call_user_func(array($sentinel, $name), $arguments);
             } catch (\Exception $e) {
                 continue;
             }
         }
 
-        throw new SentinelClientNotConnectException("all sentinel connect failed");
+        throw new SentinelClientNotConnectException("all sentinel failed");
     }
-
-
 }
