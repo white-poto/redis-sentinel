@@ -84,8 +84,8 @@ class SentinelTest extends \PHPUnit_Framework_TestCase
 
     public function testCheckQuorum()
     {
-        $this->assertTrue($this->sentinel->checkQuorum($this->master_name));
-        $this->assertTrue($this->sentinel->ckquorum($this->master_name));
+        $this->assertFalse($this->sentinel->checkQuorum($this->master_name));
+        $this->assertFalse($this->sentinel->ckquorum($this->master_name));
     }
 //
 //    public function testFailover()
