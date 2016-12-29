@@ -44,11 +44,11 @@ class Sentinel
     /**
      * This command simply returns PONG.
      *
-     * @return string
+     * @return boolean
      */
     public function ping()
     {
-        return $this->redis->ping();
+        return $this->redis->ping() === '+PONG';
     }
 
     /**
@@ -158,7 +158,7 @@ class Sentinel
 
     /**
      * @param $master_name
-     * @return mixed
+     * @return boolean
      */
     public function ckquorum($master_name)
     {
@@ -172,7 +172,7 @@ class Sentinel
      * used in monitoring systems to check if a Sentinel deployment is ok.
      *
      * @param $master_name
-     * @return mixed
+     * @return boolean
      */
     public function checkQuorum($master_name)
     {

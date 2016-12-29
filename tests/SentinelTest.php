@@ -31,13 +31,23 @@ class SentinelTest extends \PHPUnit_Framework_TestCase
 
     public function testPing()
     {
-        $this->assertEquals("+PONG", $this->sentinel->ping());
-        echo 'flushconfig:';
-        var_dump($this->sentinel->flushConfig());
-        echo 'ck:', PHP_EOL;
-        var_dump($this->sentinel->checkQuorum($this->master_name));
-        echo 'failOver:', PHP_EOL;
-        var_dump($this->sentinel->failOver($this->master_name));
+        $this->assertTrue($this->sentinel->ping());
+    }
+
+    public function testFlushConfig()
+    {
+        $this->assertTrue($this->sentinel->flushConfig());
+    }
+
+    public function testCheckQuorum()
+    {
+        $this->assertTrue($this->sentinel->checkQuorum($this->master_name));
+        $this->assertTrue($this->sentinel->ckquorum($this->master_name));
+    }
+
+    public function testFailover()
+    {
+        $this->assertFalse($this->sentinel->failOver($this->master_name));
     }
 
     public function testMasters()
@@ -56,18 +66,19 @@ class SentinelTest extends \PHPUnit_Framework_TestCase
     public function testSlaves()
     {
         $slaves = $this->sentinel->slaves($this->master_name);
-        echo 'slaves:', PHP_EOL;
-        var_dump($slaves);
         $this->assertEquals(1, count($slaves));
         $this->assertEquals('127.0.0.1', $slaves[0]['ip']);
         $this->assertEquals('6380', $slaves[0]['port']);
     }
 
+    public function testReset()
+    {
+        $this->assertEquals(1, $this->sentinel->reset($this->master_name));
+    }
+
     public function testSentinels()
     {
         $sentinels = $this->sentinel->sentinels($this->master_name);
-        echo 'sentinels:', PHP_EOL;
-        var_dump($sentinels);
         $this->assertEquals(1, count($sentinels));
         $this->assertEquals('127.0.0.1', $sentinels[0]['ip']);
         $this->assertEquals(26380, $sentinels[0]['port']);
