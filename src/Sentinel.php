@@ -120,7 +120,11 @@ class Sentinel
      */
     public function getMasterAddrByName($master_name)
     {
-        return $this->parseArrayResult($this->redis->rawCommand('SENTINEL', 'get-master-addr-by-name', $master_name));
+        $data = $this->redis->rawCommand('SENTINEL', 'get-master-addr-by-name', $master_name);
+        return array(
+            'ip' => $data[0],
+            'port' => $data[1]
+        );
     }
 
     /**

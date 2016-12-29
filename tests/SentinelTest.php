@@ -58,7 +58,7 @@ class SentinelTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('6380', $slaves[0]['port']);
     }
 
-    public function testSentinels($master_name)
+    public function testSentinels()
     {
         $sentinels = $this->sentinel->sentinels($this->master_name);
         var_dump($sentinels);
