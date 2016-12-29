@@ -10,12 +10,13 @@
   "license": "MIT",
   "type": "package",
   "require": {
-    "php": ">=5.3.0"
+    "php": ">=5.3.0",
+    "ext-redis": ">=2.2.8"
   },
   "autoload": {
     "psr-4": {
-      "Jenner\\Redis\\": "./src",
-      "Jenner\\Redis\\Test\\": "./tests"
+      "Jenner\\RedisSentinel\\": "./src",
+      "Jenner\\RedisSentinel\\Test\\": "./tests"
     }
   }
 }

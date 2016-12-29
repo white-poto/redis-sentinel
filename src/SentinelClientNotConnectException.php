@@ -6,10 +6,10 @@
  * Time: 14:25
  */
 
-namespace Jenner\Redis;
+namespace Jenner\RedisSentinel;
 
 
-class RedisSentinelClientNoConnectionException extends \RedisException
+class SentinelClientNotConnectException extends \RedisException
 {
 
 }

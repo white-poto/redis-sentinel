@@ -6,278 +6,169 @@
  * Time: 14:23
  */
 
-namespace Jenner\Redis;
+namespace Jenner\RedisSentinel;
 
 class Sentinel
 {
-    protected $_socket;
-    protected $_host;
-    protected $_port;
+    /**
+     * @var \Redis
+     */
+    protected $redis;
 
-    public function __construct($h, $p = 26379)
+    public function __construct()
     {
-        $this->_host = $h;
-        $this->_port = $p;
+        $this->redis = new \Redis();
     }
 
     public function __destruct()
     {
-        if ($this->_socket) {
-            $this->_close();
+        try{
+            $this->redis->close();
+        }catch (\Exception $e) {}
+    }
+
+    /**
+     * @param $host
+     * @param int $port
+     * @throws SentinelClientNotConnectException
+     */
+    public function connect($host, $port = 26379)
+    {
+        if (!$this->redis->connect($host, $port)) {
+            throw new SentinelClientNotConnectException("connect to sentinel failed");
         }
     }
 
-    /*!
-     * PING コマンド発行
+    /**
+     * This command simply returns PONG.
      *
-     * @retval boolean true 疎通成功
-     * @retval boolean false 疎通失敗
+     * @return string
      */
     public function ping()
     {
-        if ($this->_connect()) {
-            $this->_write('PING');
-            $this->_write('QUIT');
-            $data = $this->_get();
-            $this->_close();
-            return ($data === '+PONG');
-        } else {
-            return false;
-        }
+        return $this->redis->ping();
     }
 
-    /*!
-     * SENTINEL masters コマンド発行
+    /**
+     * Show a list of monitored masters and their state.
      *
-     * @retval array サーバからの返却値を読みやすくした値
-     * @code
-     * array (
-     *   [0]  => // master の index
-     *     array(
-     *       'name' => 'mymaster',
-     *       'host' => 'localhost',
-     *       'port' => 6379,
-     *       ...
-     *     ),
-     *   ...
-     * )
-     * @endcode
+     * @return array
      */
     public function masters()
     {
-        if ($this->_connect()) {
-            $this->_write('SENTINEL masters');
-            $this->_write('QUIT');
-            $data = $this->_extract($this->_get());
-            $this->_close();
-            return $data;
-        } else {
-            throw new RedisSentinelClientNoConnectionException();
-        }
+        return $this->redis->rawCommand('SENTINEL', 'masters');
     }
 
-    /*!
-     * SENTINEL slaves コマンド発行
+    /**
+     * Show the state and info of the specified master.
      *
-     * @param [in] $master string マスター名称
-     * @retval array サーバからの返却値を読みやすくした値
-     * @code
-     * array (
-     *   [0]  =>
-     *     array(
-     *       'name' => 'mymaster',
-     *       'host' => 'localhost',
-     *       'port' => 6379,
-     *       ...
-     *     ),
-     *   ...
-     * )
-     * @endcode
+     * @param $master_name
+     * @return array
      */
-    public function slaves($master)
+    public function master($master_name)
     {
-        if ($this->_connect()) {
-            $this->_write('SENTINEL slaves ' . $master);
-            $this->_write('QUIT');
-            $data = $this->_extract($this->_get());
-            $this->_close();
-            return $data;
-        } else {
-            throw new RedisSentinelClientNoConnectionException();
-        }
+        return $this->redis->rawCommand('SENTINEL', 'master', $master_name);
     }
 
-    /*!
-     * SENTINEL is-master-down-by-addr コマンド発行
+    /**
+     * Show a list of slaves for this master, and their state.
      *
-     * @param [in] $ip   string  対象サーバIPアドレス
-     * @param [in] $port integer ポート番号
-     * @retval array サーバからの返却値を読みやすくした値
-     * @code
-     * array (
-     *   [0]  => 1
-     *   [1]  => leader
-     * )
-     * @endcode
+     * @return array
      */
-    public function isMasterDownByAddress($ip, $port)
+    public function slaves()
     {
-        if ($this->_connect()) {
-            $this->_write('SENTINEL is-master-down-by-addr ' . $ip . ' ' . $port);
-            $this->_write('QUIT');
-            $data = $this->_get();
-            $lines = explode("\r\n", $data, 4);
-            list (/* elem num*/, $state, /* length */, $leader) = $lines;
-            $this->_close();
-            return array(ltrim($state, ':'), $leader);
-        } else {
-            throw new RedisSentinelClientNoConnectionException();
-        }
+        return $this->redis->rawCommand('SENTINEL', 'slaves');
     }
 
-    /*!
-     * SENTINEL get-master-addr-by-name コマンド発行
+    /**
+     * Show a list of sentinel instances for this master, and their state.
      *
-     * @param [in] $master string マスター名称
-     * @retval array サーバからの返却値を読みやすくした値
-     * @code
-     * array (
-     *   '<IP ADDR>' => '<PORT>',
-     * )
-     * @endcode
+     * @return array
      */
-    public function getMasterAddressByName($master)
+    public function sentinels()
     {
-        if ($this->_connect()) {
-            $this->_write('SENTINEL get-master-addr-by-name ' . $master);
-            $this->_write('QUIT');
-            $data = $this->_extract($this->_get());
-            $this->_close();
-            return $data[0];
-        } else {
-            throw new RedisSentinelClientNoConnectionException();
-        }
+        return $this->redis->rawCommand('SENTINEL', 'sentinels');
     }
 
-    /*!
-     * SENTINEL reset コマンド発行
+    /**
+     * Return the ip and port number of the master with that name.
+     * If a failover is in progress or terminated successfully
+     * for this master it returns the address and port of the promoted slave.
      *
-     * @param [in] $pattern string マスター名称パターン(globスタイル)
-     * @retval integer pattern にマッチしたマスターの数
+     * @param $master_name
+     * @return array
+     */
+    public function getMasterAddrByName($master_name)
+    {
+        return $this->redis->rawCommand('SENTINEL', 'get-master-addr-by-name', $master_name);
+    }
+
+    /**
+     * This command will reset all the masters with matching name.
+     * The pattern argument is a glob-style pattern.
+     * The reset process clears any previous state in a master
+     * (including a failover in progress), and removes every slave
+     * and sentinel already discovered and associated with the master.
+     *
+     * @param $pattern
+     * @return array
      */
     public function reset($pattern)
     {
-        if ($this->_connect()) {
-            $this->_write('SENTINEL reset ' . $pattern);
-            $this->_write('QUIT');
-            $data = $this->_get();
-            $this->_close();
-            return ltrim($data, ':');
-        } else {
-            throw new RedisSentinelClientNoConnectionException;
-        }
+        return $this->redis->rawCommand('SENTINEL', 'reset', $pattern);
     }
 
-    /*!
-     * Sentinel サーバとの接続を行う
+    /**
+     * Force a failover as if the master was not reachable,
+     * and without asking for agreement to other Sentinels
+     * (however a new version of the configuration will be published
+     * so that the other Sentinels will update their configurations).
      *
-     * @retval boolean true  接続成功
-     * @retval boolean false 接続失敗
+     * @param $master_name
+     * @return mixed
      */
-    protected function _connect()
+    public function failOver($master_name)
     {
-        $this->_socket = @fsockopen($this->_host, $this->_port, $en, $es);
-        return !!($this->_socket);
+        return $this->redis->rawCommand('SENTINEL', 'failover', $master_name);
     }
 
-    /*!
-     * Sentinel サーバとの接続を切断する
+    /**
+     * Check if the current Sentinel configuration is able to
+     * reach the quorum needed to failover a master, and the majority
+     * needed to authorize the failover. This command should be
+     * used in monitoring systems to check if a Sentinel deployment is ok.
      *
-     * @retval boolean true  切断成功
-     * @retval boolean false 切断失敗
+     * @param $master_name
+     * @return mixed
      */
-    protected function _close()
+    public function checkQuorum($master_name)
     {
-        $ret = @fclose($this->_socket);
-        $this->_socket = null;
-        return $ret;
+        return $this->redis->rawCommand('SENTINEL', 'ckquorum', $master_name);
     }
 
-    /*!
-     * Sentinel サーバからの返却がまだあるか
-     *
-     * @retval boolean true  残データ有り
-     * @retval boolean false 残データ無し
+    /**
+     * @param $master_name
+     * @return mixed
      */
-    protected function _receiving()
+    public function ckquorum($master_name)
     {
-        return !feof($this->_socket);
+        return $this->checkQuorum($master_name);
     }
 
-    /*!
-     * Sentinel サーバへコマンド発行
+    /**
+     * Force Sentinel to rewrite its configuration on disk,
+     * including the current Sentinel state. Normally Sentinel rewrites
+     * the configuration every time something changes in its state
+     * (in the context of the subset of the state which is persisted on disk across restart).
+     * However sometimes it is possible that the configuration file is lost because of
+     * operation errors, disk failures, package upgrade scripts or configuration managers.
+     * In those cases a way to to force Sentinel to rewrite the configuration file is handy.
+     * This command works even if the previous configuration file is completely missing.
      *
-     * @param [in] $c string コマンド文字列
-     * @retval mixed integer 書き込んだバイト数
-     * @retval mixed boolean false エラー発生
+     * @return mixed
      */
-    protected function _write($c)
+    public function flushConfig()
     {
-        return fwrite($this->_socket, $c . "\r\n");
-    }
-
-    /*!
-     * Sentinel read all data the sentinel server package
-     *
-     * @return string completely redis protocol package string
-     */
-    protected function _get()
-    {
-        $buf = '';
-        while ($this->_receiving()) {
-            $buf .= fgets($this->_socket);
-        }
-        return rtrim($buf, "\r\n+OK\n");
-    }
-
-    /*!
-     * redis protocol parser
-     *
-     * @param [in] $data string redis protocol frame
-     * @return array
-     */
-    protected function _extract($data)
-    {
-        if (!$data) return array();
-        $lines = explode("\r\n", $data);
-        $is_root = $is_child = false;
-        $c = count($lines);
-        $results = $current = array();
-        for ($i = 0; $i < $c; $i++) {
-            $str = $lines[$i];
-            $prefix = substr($str, 0, 1);
-            if ($prefix === '*') {
-                if (!$is_root) {
-                    $is_root = true;
-                    $current = array();
-                    continue;
-                } else if (!$is_child) {
-                    $is_child = true;
-                    continue;
-                } else {
-                    $is_root = $is_child = false;
-                    $results[] = $current;
-                    continue;
-                }
-            }
-            $keylen = $lines[$i++];
-            $key = $lines[$i++];
-            $vallen = $lines[$i++];
-            $val = $lines[$i++];
-            $current[$key] = $val;
-            --$i;
-        }
-        $results[] = $current;
-        return $results;
+        return $this->redis->rawCommand('SENTINEL', 'flushconfig');
     }
 }

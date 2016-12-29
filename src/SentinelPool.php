@@ -6,7 +6,7 @@
  * Time: 17:44
  */
 
-namespace Jenner\Redis;
+namespace Jenner\RedisSentinel;
 
 
 class SentinelPool
@@ -37,7 +37,7 @@ class SentinelPool
             }
         }
 
-        throw new RedisSentinelClientNoConnectionException("all sentinel connect failed");
+        throw new SentinelClientNotConnectException("all sentinel connect failed");
     }
 
     public function slaves($master_name) {
@@ -49,7 +49,7 @@ class SentinelPool
             }
         }
 
-        throw new RedisSentinelClientNoConnectionException("all sentinel connect failed");
+        throw new SentinelClientNotConnectException("all sentinel connect failed");
     }
 
     public function isMasterDownByAddress($ip, $port) {
@@ -61,7 +61,7 @@ class SentinelPool
             }
         }
 
-        throw new RedisSentinelClientNoConnectionException("all sentinel connect failed");
+        throw new SentinelClientNotConnectException("all sentinel connect failed");
     }
 
     public function reset($pattern) {
@@ -73,13 +73,13 @@ class SentinelPool
             }
         }
 
-        throw new RedisSentinelClientNoConnectionException("all sentinel connect failed");
+        throw new SentinelClientNotConnectException("all sentinel connect failed");
     }
 
     /**
      * @param string $master_name redis master name
      * @return array ["host"=>$host, "port"=>$port]
-     * @throws RedisSentinelClientNoConnectionException
+     * @throws SentinelClientNotConnectException
      */
     public function getMasterAddressByName($master_name)
     {
@@ -97,7 +97,7 @@ class SentinelPool
             }
         }
 
-        throw new RedisSentinelClientNoConnectionException("all sentinel connect failed");
+        throw new SentinelClientNotConnectException("all sentinel connect failed");
     }
 
 
