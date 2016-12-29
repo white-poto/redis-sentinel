@@ -14,7 +14,7 @@ before_script:
  - php -i | grep redis
 
 script:
-  - phpunit -v --coverage-text --coverage-clover=coverage.clover
+  - sleep 10 && phpunit -v --coverage-text --coverage-clover=coverage.clover
 
 after_script:
   - wget https://scrutinizer-ci.com/ocular.phar
