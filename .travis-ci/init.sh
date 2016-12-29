@@ -10,3 +10,6 @@ redis-server etc/redis.6380.conf
 
 redis-sentinel etc/sentinel.26379.conf
 redis-sentinel etc/sentinel.26380.conf
+
+
+ss -l
