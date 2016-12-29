@@ -1,4 +1,10 @@
 # redis-sentinel
+[![Latest Stable Version](https://poser.pugx.org/jenner/redis_sentinel/v/stable)](https://packagist.org/packages/jenner/simple_fork) 
+[![Total Downloads](https://poser.pugx.org/jenner/redis_sentinel/downloads)](https://packagist.org/packages/jenner/simple_fork) 
+[![Latest Unstable Version](https://poser.pugx.org/jenner/redis_sentinel/v/unstable)](https://packagist.org/packages/jenner/simple_fork) 
+[![License](https://poser.pugx.org/jenner/redis_sentinel/license)](https://packagist.org/packages/jenner/simple_fork) 
+[![travis](https://travis-ci.org/huyanping/redis-sentinel.svg)](https://travis-ci.org/huyanping/simple-fork-php)
+
 redis-sentinel client for php based on phpredis extension.
 
 ## examples
