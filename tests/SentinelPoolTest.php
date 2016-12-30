@@ -34,8 +34,8 @@ class SentinelPoolTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(1, count($masters));
         $this->assertEquals($this->master_name, $masters[0]['name']);
 
-//        $master = $this->sentinel_pool->master($this->master_name);
-//        $this->assertEquals($this->master_name, $master['name']);
+        $master = $this->sentinel_pool->master($this->master_name);
+        $this->assertEquals($this->master_name, $master['name']);
 
         $slaves = $this->sentinel_pool->slaves($this->master_name);
         $this->assertEquals(2, count($slaves));

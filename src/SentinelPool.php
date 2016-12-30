@@ -88,7 +88,8 @@ class SentinelPool
             try {
                 return call_user_func(array($sentinel, $name), $arguments);
             } catch (\Exception $e) {
-                continue;
+//                continue;
+                throw $e;
             }
         }
 
