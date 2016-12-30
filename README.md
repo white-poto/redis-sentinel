@@ -26,6 +26,9 @@ $sentinel_pool = new \Jenner\RedisSentinel\SentinelPool();
 $sentinel_pool->addSentinel('127.0.0.1', 26379);
 $sentinel_pool->addSentinel('127.0.0.1', 26380);
 
+$address = $sentinel_pool->master('mymaster');
+print_r($address);
+
 $redis = $sentinel_pool->getRedis('mymaster');
 $info = $redis->info();
 print_r($info);
