@@ -93,7 +93,6 @@ class Sentinel
      */
     public function master($master_name)
     {
-        var_dump(func_get_args());
         return $this->parseArrayResult($this->redis->rawCommand('SENTINEL', 'master', $master_name));
     }
 
