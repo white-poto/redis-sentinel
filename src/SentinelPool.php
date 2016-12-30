@@ -86,11 +86,9 @@ class SentinelPool
                 throw new \BadMethodCallException("method not exists. method: {$name}");
             }
             try {
-                var_dump($arguments);
-                return call_user_func(array($sentinel, $name), $arguments);
+                return call_user_func_array(array($sentinel, $name), $arguments);
             } catch (\Exception $e) {
-//                continue;
-                throw $e;
+                continue;
             }
         }
 
