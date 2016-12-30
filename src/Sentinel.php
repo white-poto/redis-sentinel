@@ -102,6 +102,7 @@ class Sentinel
      */
     public function slaves($master_name)
     {
+        var_dump($this->redis->rawCommand('SENTINEL', 'slaves', $master_name));
         return $this->parseArrayResult($this->redis->rawCommand('SENTINEL', 'slaves', $master_name));
     }
 
