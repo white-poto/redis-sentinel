@@ -44,11 +44,11 @@ class Sentinel
     /**
      * This command simply returns PONG.
      *
-     * @return boolean
+     * @return string STRING: +PONG on success. Throws a RedisException object on connectivity error.
      */
     public function ping()
     {
-        return $this->redis->ping() === '+PONG';
+        return $this->redis->ping();
     }
 
     /**

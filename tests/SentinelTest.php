@@ -31,7 +31,7 @@ class SentinelTest extends \PHPUnit_Framework_TestCase
 
     public function testPing()
     {
-        $this->assertTrue($this->sentinel->ping());
+        $this->assertEquals('+PONG', $this->sentinel->ping());
     }
 
     public function testMasters()
