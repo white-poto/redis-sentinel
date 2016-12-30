@@ -71,12 +71,14 @@ class Sentinel
     {
         $result = array();
         $count = count($data);
-        for ($i = 0; $i < $count; $i += 2) {
+        for ($i = 0; $i < $count;) {
             $record = $data[$i];
             if (is_array($record)) {
                 $result[] = $this->parseArrayResult($record);
+                $i++;
             } else {
                 $result[$record] = $data[$i + 1];
+                $i += 2;
             }
         }
 
