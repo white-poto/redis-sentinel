@@ -50,9 +50,10 @@ class SentinelTest extends \PHPUnit_Framework_TestCase
     public function testSlaves()
     {
         $slaves = $this->sentinel->slaves($this->master_name);
-        $this->assertEquals(1, count($slaves));
+        print_r($slaves);
+        $this->assertEquals(2, count($slaves));
         $this->assertEquals('127.0.0.1', $slaves[0]['ip']);
-        $this->assertEquals('6380', $slaves[0]['port']);
+        $this->assertTrue(in_array($slaves[0]['port'], array('6380', '6381')));
     }
 
 //    public function testReset()
