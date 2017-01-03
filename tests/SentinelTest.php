@@ -69,8 +69,7 @@ class SentinelTest extends \PHPUnit_Framework_TestCase
             $master_names[] = $master['name'];
         }
         $this->assertTrue(in_array('add_master', $master_names));
+        $this->assertTrue($this->sentinel->set('add_master', 'down-after-milliseconds', 10000));
         $this->assertTrue($this->sentinel->remove('add_master'));
-        var_dump($this->sentinel->set('add_master', 'down-after-milliseconds', 10000));
-        echo $this->sentinel->getLastError();
     }
 }
