@@ -1,5 +1,12 @@
 {
   "name": "jenner/redis_sentinel",
+  "description": "redis sentinel client for php 5.3+",
+  "keywords": [
+    "sentinel",
+    "redis sentinel",
+    "sentinel client",
+    "redis sentinel client"
+  ],
   "authors": [
     {
       "name": "Jenner",
