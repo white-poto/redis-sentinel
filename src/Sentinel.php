@@ -215,7 +215,7 @@ class Sentinel
      * @param $ip
      * @param $port
      * @param $quorum
-     * @return mixed
+     * @return boolean
      */
     public function monitor($master_name, $ip, $port, $quorum)
     {
@@ -228,7 +228,7 @@ class Sentinel
      * so it will no longer listed by SENTINEL masters and so forth.
      *
      * @param $master_name
-     * @return mixed
+     * @return boolean
      */
     public function remove($master_name)
     {
@@ -245,7 +245,7 @@ class Sentinel
      * @param $master_name
      * @param $option
      * @param $value
-     * @return mixed
+     * @return boolean
      */
     public function set($master_name, $option, $value)
     {

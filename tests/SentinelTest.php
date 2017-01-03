@@ -61,8 +61,15 @@ class SentinelTest extends \PHPUnit_Framework_TestCase
 
         $this->assertFalse($this->sentinel->failOver($this->master_name));
 
-        var_dump($this->sentinel->monitor('add_master', '127.0.0.1', 6382, 2));
-        var_dump($this->sentinel->remove('add_master'));
-        var_dump($this->sentinel->set('add_master', 'down-after-milliseconds', 1000));
+        $this->assertTrue($this->sentinel->monitor('add_master', '127.0.0.1', 6382, 2));
+        $masters = $this->sentinel->masters();
+        $this->assertEquals(2, count($masters));
+        $master_names = array();
+        foreach ($masters as $master) {
+            $master_names[] = $master['name'];
+        }
+        $this->assertTrue(in_array('add_master', $master_names));
+        $this->assertTrue($this->sentinel->remove('add_master'));
+        var_dump($this->sentinel->set('add_master', 'down-after-milliseconds', 10000));
     }
 }
