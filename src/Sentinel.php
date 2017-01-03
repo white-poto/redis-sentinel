@@ -22,9 +22,10 @@ class Sentinel
 
     public function __destruct()
     {
-        try{
+        try {
             $this->redis->close();
-        }catch (\Exception $e) {}
+        } catch (\Exception $e) {
+        }
     }
 
     /**
@@ -202,5 +203,52 @@ class Sentinel
     public function flushConfig()
     {
         return $this->redis->rawCommand('SENTINEL', 'flushconfig');
+    }
+
+    /**
+     * This command tells the Sentinel to start monitoring a new master with the specified name,
+     * ip, port, and quorum. It is identical to the sentinel monitor configuration directive
+     * in sentinel.conf configuration file, with the difference that you can't use an hostname in as ip,
+     * but you need to provide an IPv4 or IPv6 address.
+     *
+     * @param $master_name
+     * @param $ip
+     * @param $port
+     * @param $quorum
+     * @return mixed
+     */
+    public function monitor($master_name, $ip, $port, $quorum)
+    {
+        return $this->redis->rawCommand('SENTINEL', 'monitor', $master_name, $ip, $port, $quorum);
+    }
+
+    /**
+     * is used in order to remove the specified master: the master will no longer be monitored,
+     * and will totally be removed from the internal state of the Sentinel,
+     * so it will no longer listed by SENTINEL masters and so forth.
+     *
+     * @param $master_name
+     * @return mixed
+     */
+    public function remove($master_name)
+    {
+        return $this->redis->rawCommand('SENTINEL', 'remove', $master_name);
+    }
+
+    /**
+     * The SET command is very similar to the CONFIG SET command of Redis,
+     * and is used in order to change configuration parameters of a specific master.
+     * Multiple option / value pairs can be specified (or none at all).
+     * All the configuration parameters that can be configured via sentinel.conf
+     * are also configurable using the SET command.
+     *
+     * @param $master_name
+     * @param $option
+     * @param $value
+     * @return mixed
+     */
+    public function set($master_name, $option, $value)
+    {
+        return $this->redis->rawCommand('SENTINEL', 'set', $master_name, $option, $value);
     }
 }
