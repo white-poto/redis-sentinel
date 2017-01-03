@@ -23,6 +23,10 @@ namespace Jenner\RedisSentinel;
  * @method boolean ckquorum(string $master_name)
  * @method boolean checkQuorum(string $master_name)
  * @method boolean flushConfig()
+ * @method boolean monitor($master_name, $ip, $port, $quorum)
+ * @method boolean remove($master_name)
+ * @method boolean set($master_name, $option, $value)
+ * @method
  */
 class SentinelPool
 {

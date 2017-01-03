@@ -252,14 +252,34 @@ class Sentinel
         return $this->redis->rawCommand('SENTINEL', 'set', $master_name, $option, $value);
     }
 
+    /**
+     * get last error
+     *
+     * @return string
+     */
     public function getLastError()
     {
         return $this->redis->getLastError();
     }
 
+    /**
+     * clear last error
+     *
+     * @return boolean
+     */
     public function clearLastError()
     {
-        return $this->clearLastError();
+        return $this->redis->clearLastError();
+    }
+
+    /**
+     * sentinel server info
+     *
+     * @return string
+     */
+    public function info()
+    {
+        return $this->redis->info();
     }
 
 }
