@@ -51,13 +51,14 @@ class SentinelPool
      *
      * @param string $host sentinel server host
      * @param int $port sentinel server port
+     * @param float $timeout connect timeout in seconds
      * @return bool
      */
-    public function addSentinel($host, $port)
+    public function addSentinel($host, $port, $timeout = 0.0)
     {
         $sentinel = new Sentinel();
         // if connect to sentinel successfully, add it to sentinels array
-        if ($sentinel->connect($host, $port)) {
+        if ($sentinel->connect($host, $port, $timeout)) {
             $this->sentinels[] = $sentinel;
             return true;
         }

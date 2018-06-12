@@ -31,11 +31,12 @@ class Sentinel
     /**
      * @param $host
      * @param int $port
+     * @param float $timeout connect timeout in seconds
      * @return boolean
      */
-    public function connect($host, $port = 26379)
+    public function connect($host, $port = 26379, $timeout = 0.0)
     {
-        if (!$this->redis->connect($host, $port)) {
+        if (!$this->redis->connect($host, $port, $timeout)) {
             return false;
         }
 

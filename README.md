@@ -34,3 +34,9 @@ $info = $redis->info();
 print_r($info);
 ```
 
+In order to prevent redis/sentinel to wait too long for connections in case of 
+issues with the Redis backend it's advisable to use a timeout (in seconds):
+
+```php
+$sentinel_pool->addSentinel('127.0.0.1', 26380, 1.0); # 1 second timeout
+```
