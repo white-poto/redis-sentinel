@@ -15,9 +15,15 @@ class Sentinel
      */
     protected $redis;
 
-    public function __construct()
+    /**
+     * @var float connect timeout in seconds
+     */
+    protected $timeout;
+
+    public function __construct($timeout = null)
     {
         $this->redis = new \Redis();
+        $this->timeout = $timeout === null ? 0.0 : $timeout;
     }
 
     public function __destruct()
@@ -34,9 +40,9 @@ class Sentinel
      * @param float $timeout connect timeout in seconds
      * @return boolean
      */
-    public function connect($host, $port = 26379, $timeout = 0.0)
+    public function connect($host, $port = 26379, $timeout = null)
     {
-        if (!$this->redis->connect($host, $port, $timeout)) {
+        if (!$this->redis->connect($host, $port, $timeout === null ? $this->timeout : $timeout)) {
             return false;
         }
 
@@ -281,6 +287,14 @@ class Sentinel
     public function info()
     {
         return $this->redis->info();
+    }
+
+    /**
+     * @return float
+     */
+    public function getTimeout()
+    {
+        return $this->timeout;
     }
 
 }
