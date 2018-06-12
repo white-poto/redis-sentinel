@@ -105,4 +105,12 @@ class SentinelPool
 
         throw new SentinelClientNotConnectException("all sentinel failed");
     }
+
+    /**
+     * @return Sentinel
+     */
+    public function getCurrentSentinel()
+    {
+        return $this->currentSentinel;
+    }
 }
