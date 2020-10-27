@@ -15,8 +15,8 @@ class SentinelPoolTest extends \PHPUnit_Framework_TestCase
     /**
      * @var SentinelPool
      */
-    private $sentinel_pool;
-    private $master_name = 'mymaster';
+    protected $sentinel_pool;
+    protected $master_name = 'mymaster';
 
     public function setUp()
     {

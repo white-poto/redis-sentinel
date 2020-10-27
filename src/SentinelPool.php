@@ -36,6 +36,11 @@ class SentinelPool
     protected $sentinels = array();
 
     /**
+     * @var Sentinel
+     */
+    protected $currentSentinel = null;
+
+    /**
      * SentinelPool constructor.
      * @param array $sentinels [['host'=>'host', 'port'=>'port']]
      */
@@ -51,13 +56,14 @@ class SentinelPool
      *
      * @param string $host sentinel server host
      * @param int $port sentinel server port
+     * @param null|float $timeout connect timeout in seconds
      * @return bool
      */
-    public function addSentinel($host, $port)
+    public function addSentinel($host, $port, $timeout = null)
     {
-        $sentinel = new Sentinel();
+        $sentinel = new Sentinel($timeout);
         // if connect to sentinel successfully, add it to sentinels array
-        if ($sentinel->connect($host, $port)) {
+        if ($sentinel->connect($host, $port, $timeout)) {
             $this->sentinels[] = $sentinel;
             return true;
         }
@@ -76,7 +82,7 @@ class SentinelPool
     {
         $address = $this->getMasterAddrByName($master_name);
         $redis = new \Redis();
-        if (!$redis->connect($address['ip'], $address['port'])) {
+        if (!$redis->connect($address['ip'], $address['port'], $this->currentSentinel->getTimeout())) {
             throw new \RedisException("connect to redis failed");
         }
 
@@ -90,6 +96,7 @@ class SentinelPool
                 throw new \BadMethodCallException("method not exists. method: {$name}");
             }
             try {
+                $this->currentSentinel = $sentinel;
                 return call_user_func_array(array($sentinel, $name), $arguments);
             } catch (\Exception $e) {
                 continue;
@@ -97,5 +104,13 @@ class SentinelPool
         }
 
         throw new SentinelClientNotConnectException("all sentinel failed");
+    }
+
+    /**
+     * @return Sentinel
+     */
+    public function getCurrentSentinel()
+    {
+        return $this->currentSentinel;
     }
 }
